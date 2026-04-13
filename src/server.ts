@@ -16,6 +16,9 @@ import swaggerUi from 'swagger-ui-express';
 import { app, server } from './socket/socket';
 dotenv.config();
 
+// Trust Vercel's proxy so secure cookies and req.protocol work correctly
+app.set('trust proxy', 1);
+
 (async () => {
   mongoose.set('strictQuery', true);
   await mongoose.connect(mongoUri);
@@ -69,7 +72,7 @@ app.use(
       // Cookie expiration in milliseconds (e.g., 7 days)
       maxAge: 1000 * 60 * 60 * 24 * 7,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: 'lax' as const,
       httpOnly: true, // Prevent XSS attacks
     },
   }),
@@ -84,10 +87,12 @@ app.use(express.json());
 
 initializeRoutes(app);
 
-server.listen(process.env.PORT, () =>
-  console.log(
-    `Server started on port ${process.env.PORT} in ${process.env.NODE_ENV} mode`,
-  ),
-);
+if (!process.env.VERCEL) {
+  server.listen(process.env.PORT, () =>
+    console.log(
+      `Server started on port ${process.env.PORT} in ${process.env.NODE_ENV} mode`,
+    ),
+  );
+}
 
 export default app;

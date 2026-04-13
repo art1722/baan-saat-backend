@@ -9,9 +9,15 @@ import User from '../models/User';
 import socialVerify from './socialVerify';
 
 const initializePassport = (passport: passport.PassportStatic): void => {
-  passport.use(new GoogleStrategy(googleConfig, socialVerify('google')));
-  passport.use(new FacebookStrategy(facebookConfig, socialVerify('facebook')));
-  passport.use(new LineStrategy(lineConfig, socialVerify('line')));
+  if (googleConfig.clientID && googleConfig.clientSecret) {
+    passport.use(new GoogleStrategy(googleConfig, socialVerify('google')));
+  }
+  if (facebookConfig.clientID && facebookConfig.clientSecret) {
+    passport.use(new FacebookStrategy(facebookConfig, socialVerify('facebook')));
+  }
+  if (lineConfig.channelID && lineConfig.channelSecret) {
+    passport.use(new LineStrategy(lineConfig, socialVerify('line')));
+  }
 
   passport.serializeUser((user: any, done) => done(null, user.id));
   passport.deserializeUser(async (id, done) => {

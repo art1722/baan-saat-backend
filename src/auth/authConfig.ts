@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { serverUrl } from '../configs';
 
 dotenv.config();
 
@@ -14,9 +13,9 @@ const credentialsList: string[] = [
 
 credentialsList.map((credential) => {
   if (!process.env[credential]) {
-    throw new Error(
-      `Missing required environment variable: ${credential}. ` +
-        'Please set this in your .env file.',
+    console.warn(
+      `Warning: Missing environment variable: ${credential}. ` +
+        'Some social login providers may not work.',
     );
   }
 });
@@ -24,18 +23,18 @@ credentialsList.map((credential) => {
 export const googleConfig = {
   clientID: process.env.GOOGLE_CLIENT_ID || '',
   clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-  callbackURL: `${serverUrl}/auth/google/callback`,
+  callbackURL: `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/google/callback`,
   scope: ['profile', 'email'],
 };
 
 export const facebookConfig = {
   clientID: process.env.FACEBOOK_CLIENT_ID || '',
   clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
-  callbackURL: `${serverUrl}/auth/facebook/callback`,
+  callbackURL: `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/facebook/callback`,
 };
 
 export const lineConfig = {
   channelID: process.env.LINE_CHANNEL_ID || '',
   channelSecret: process.env.LINE_CHANNEL_SECRET || '',
-  callbackURL: `${serverUrl}/auth/line/callback`,
+  callbackURL: `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/line/callback`,
 };
