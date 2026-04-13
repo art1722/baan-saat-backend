@@ -22,6 +22,6 @@ const addSocialRoutes = (socials: string[]) => {
 
 addSocialRoutes(['google', 'facebook', 'line']);
 
-router.delete('/logout', logout);
+router.delete('/auth/logout', logout);
 
 export default router;
